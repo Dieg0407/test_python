@@ -23,6 +23,8 @@ def basic_sort(data):
 def main():
     lines = processFile("data_sample.csv")
     
+    print(lines.count())
+
     for line in lines:
         print(line)
 
