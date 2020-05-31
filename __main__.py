@@ -68,31 +68,34 @@ def is_number_regex(s):
         return s.isdigit()
     return True
 
-
 def analizar_reg(reg, obs, data_frame, headers, nombre):
+    
+    if len(data_frame) == 0:
+        return obs
 
-    if len(data_frame) > 0:
-        row = data_frame.iloc[0]
+    row = data_frame.iloc[0]
+    if len(reg) == 0:
+        obs = f"El valor inicial se obtuvo de {nombre}. "
+        for idx, header in enumerate(headers):
+            value = str(row.get(header)).strip()
 
-        if len(reg) == 0:
-            obs = f"El valor inicial se obtuvo de {nombre}. "
-            for idx, header in enumerate(headers):
-                value = str(row.get(header)).strip()
+            if value != 'nan' and value != 'None':
+                reg.append(value)
+            else:
+                reg.append("")
+    else:
+        for idx, header in enumerate(headers):
+            value = str(row.get(header)).strip()
 
-                if value != 'nan' and value != 'None':
-                    reg.append(value)
-                else:
-                    reg.append("")
-        else:
-            for idx, header in enumerate(headers):
-                value = str(row.get(header))
-
-                t_value = float(value) if is_number_regex(value) else value
-                t_reg = float(reg[idx]) if is_number_regex(reg[idx]) else reg[idx]
-                
-                if value != 'nan' and value != 'None':
-                    if t_value != t_reg and reg[idx] != "":
-                        obs += f"El valor del header {header} entre el original [{reg[idx]}] y {nombre} [{value}] son diferentes. "   
+            t_value = float(value) if is_number_regex(value) else value
+            t_reg = float(reg[idx]) if is_number_regex(reg[idx]) else reg[idx]
+            
+            if value != 'nan' and value != 'None':
+                if t_value != t_reg and reg[idx] != "":
+                    obs += f"El valor del header {header} entre el original [{reg[idx]}] y {nombre} [{value}] son diferentes. "
+                elif reg[idx] == "":
+                    obs += f"El nuevo valor del header {header} sera {t_value} proviniendo de {nombre}. "
+                    reg[idx] = value
     
     return obs
 
